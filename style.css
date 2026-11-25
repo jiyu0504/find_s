@@ -1,0 +1,733 @@
+/* ==========================================================================
+   Find:S 스타일시트
+   목차
+   1. 변수 / 이미지 경로   2. 기본 설정        3. 상단 바(헤더)
+   4. 히어로             5. 공통 본문         6. 학과 상세 (TOOLS · 입시결과)
+   7. 학과 선택 카드      8. 취업 상세         9. 푸터
+   10. 대학소개          11. 빈 페이지·안내   12. 이미지 없음 표시
+   13. 모바일 (760px 이하)
+   ========================================================================== */
+
+
+/* 1. 변수 / 이미지 경로 -------------------------------------------------- */
+:root {
+  /* 색상 */
+  --color-text: #191919;
+  --color-dark: #171717;
+  --color-white: #fff;
+  --color-muted: #666;
+  --color-bg-soft: #f5f5f3;
+
+  /* 입시결과 카드 배경 이미지 (이 파일 기준 경로) */
+  --admission-img-1: url("assets/common/admission-1.jpg");
+  --admission-img-2: url("assets/common/admission-2.jpg");
+  --admission-img-3: url("assets/common/admission-3.jpg");
+  --admission-img-4: url("assets/common/admission-4.jpg");
+  --admission-img-5: url("assets/common/admission-5.jpg");
+}
+
+
+/* 2. 기본 설정 ----------------------------------------------------------- */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, "Noto Sans KR", sans-serif;
+  color: var(--color-text);
+  background: var(--color-white);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+
+
+/* 3. 상단 바(헤더) ------------------------------------------------------- */
+.topbar {
+  height: 78px;
+  position: absolute;
+  z-index: 5;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 7%;
+  color: var(--color-white);
+}
+
+/* 흰 배경 페이지(학과 선택, 소식 등)에서는 어두운 글자색 */
+.topbar.dark {
+  color: var(--color-text);
+}
+
+.logo {
+  font-size: 30px;
+  font-weight: 400;
+  letter-spacing: -1px;
+}
+
+.topbar nav {
+  display: flex;
+  gap: clamp(24px, 6vw, 100px);
+  font-size: 17px;
+}
+
+.topbar nav a {
+  transition: opacity 0.2s;
+}
+
+.topbar nav a:hover {
+  opacity: 0.65;
+}
+
+/* 현재 페이지 표시 */
+.topbar nav a[aria-current="page"] {
+  text-decoration: underline;
+  text-underline-offset: 8px;
+}
+
+.menu {
+  display: none;
+  background: none;
+  border: 0;
+  color: inherit;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+
+/* 4. 히어로 -------------------------------------------------------------- */
+.hero {
+  height: min(100vh, 760px);
+  min-height: 540px;
+  background-color: #555; /* 이미지가 없을 때 보이는 색 */
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  color: var(--color-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.hero-copy {
+  padding: 80px 24px 0;
+  max-width: 950px;
+}
+
+.hero-copy h1 {
+  font-size: clamp(36px, 5vw, 64px);
+  font-weight: 400;
+  letter-spacing: -2px;
+  margin: 0 0 14px;
+}
+
+.hero-copy p {
+  font-size: clamp(15px, 1.7vw, 22px);
+  line-height: 1.65;
+  margin: 0;
+  white-space: pre-line; /* 소개 문구의 \n 줄바꿈 반영 */
+}
+
+.home-hero {
+  height: 100vh;
+  min-height: 620px;
+}
+
+
+/* 5. 공통 본문 ----------------------------------------------------------- */
+.content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 70px 28px 100px;
+}
+
+.section {
+  text-align: center;
+  margin: 0 auto 110px;
+}
+
+.section h2 {
+  font-size: 34px;
+  font-weight: 500;
+  margin: 0 0 15px;
+}
+
+
+/* 6. 학과 상세 (TOOLS · 입시결과) ---------------------------------------- */
+.tools h2 {
+  letter-spacing: 4px;
+}
+
+.tool-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  max-width: 760px;
+  margin: 55px auto 25px;
+}
+
+.tool-card {
+  height: 230px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 2px;
+  color: var(--color-white);
+  text-align: left;
+  background: #777;
+}
+
+.tool-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.72);
+}
+
+.tool-card span {
+  position: absolute;
+  bottom: 18px;
+  left: 18px;
+  font-size: 19px;
+}
+
+.tagline {
+  color: var(--color-muted);
+  font-size: 14px;
+  letter-spacing: 0.5px;
+}
+
+.admission {
+  background: var(--color-bg-soft);
+  padding: 55px 25px 65px;
+  max-width: none;
+  margin: 0 calc((1200px - 100vw) / 2) 0;
+  padding-left: max(25px, calc((100vw - 1140px) / 2));
+  padding-right: max(25px, calc((100vw - 1140px) / 2));
+}
+
+.admission > p {
+  color: #777;
+  margin: 0 0 36px;
+}
+
+.admission-track {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+}
+
+.admission-card {
+  min-height: 210px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  color: var(--color-white);
+  background-color: #555; /* 이미지가 없을 때 보이는 색 */
+  background-image: linear-gradient(#0006, #0008), var(--admission-img-1);
+  background-size: cover;
+  background-position: center;
+  border-radius: 4px;
+  padding: 18px;
+}
+
+.admission-card:nth-child(2) { background-image: linear-gradient(#0006, #0008), var(--admission-img-2); }
+.admission-card:nth-child(3) { background-image: linear-gradient(#0006, #0008), var(--admission-img-3); }
+.admission-card:nth-child(4) { background-image: linear-gradient(#0006, #0008), var(--admission-img-4); }
+.admission-card:nth-child(5) { background-image: linear-gradient(#0006, #0008), var(--admission-img-5); }
+
+.admission-card small {
+  font-size: 14px;
+}
+
+.admission-card strong {
+  font-size: clamp(22px, 3vw, 36px);
+  font-weight: 400;
+}
+
+
+/* 7. 학과 선택 카드 ------------------------------------------------------ */
+.selection {
+  min-height: calc(100vh - 100px);
+  padding: 145px 6% 100px;
+}
+
+.selection-title {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.selection-title p {
+  font-size: 12px;
+  letter-spacing: 4px;
+  color: #888;
+}
+
+.selection-title h1 {
+  font-size: 38px;
+  font-weight: 400;
+}
+
+.carousel-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.department-track {
+  display: flex;
+  gap: 22px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  padding: 8px 4px 24px;
+  width: 100%;
+}
+
+.department-track::-webkit-scrollbar {
+  display: none;
+}
+
+.dept-card {
+  flex: 0 0 clamp(180px, 22vw, 260px);
+  height: 440px;
+  position: relative;
+  border-radius: 24px;
+  overflow: hidden;
+  scroll-snap-align: start;
+  background: #ddd;
+}
+
+.dept-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s;
+}
+
+.dept-card:hover img {
+  transform: scale(1.05);
+}
+
+.dept-card::after {
+  content: "";
+  position: absolute;
+  inset: 40% 0 0;
+  background: linear-gradient(transparent, #0009);
+}
+
+.dept-card span {
+  position: absolute;
+  bottom: 26px;
+  left: 18px;
+  right: 18px;
+  color: var(--color-white);
+  font-size: 23px;
+  z-index: 1;
+  text-align: center;
+}
+
+/* 데이터가 아직 없는 학과 ("준비 중") */
+.dept-card.is-soon {
+  cursor: default;
+}
+
+.dept-card.is-soon img {
+  filter: grayscale(1) brightness(0.8);
+}
+
+.dept-card.is-soon:hover img {
+  transform: none;
+}
+
+.dept-card .soon-badge {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  bottom: auto;
+  left: auto;
+  padding: 5px 12px;
+  border-radius: 99px;
+  background: rgb(0 0 0 / 0.65);
+  font-size: 13px;
+}
+
+.arrow {
+  border: 0;
+  background: var(--color-dark);
+  color: var(--color-white);
+  border-radius: 50%;
+  width: 42px;
+  height: 42px;
+  font-size: 28px;
+  flex: 0 0 42px;
+  cursor: pointer;
+}
+
+
+/* 8. 취업 상세 ----------------------------------------------------------- */
+.mini-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  max-width: 850px;
+  margin: 42px auto 0;
+}
+
+.mini-card {
+  height: 130px;
+  border-radius: 20px;
+  background: #f1f1ef;
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+  padding: 15px;
+}
+
+.employment-detail .section {
+  margin-bottom: 90px;
+}
+
+.rate {
+  text-align: center;
+  padding: 55px 20px 70px;
+  margin: 0 auto 90px;
+  background: #f7f7f5;
+  border-radius: 48% 48% 0 0 / 12% 12% 0 0;
+}
+
+.rate p {
+  color: #777;
+}
+
+.rate h3 {
+  font-weight: 400;
+}
+
+.rate strong {
+  display: block;
+  font-size: clamp(56px, 9vw, 100px);
+  font-weight: 300;
+  margin: 25px 0;
+}
+
+.job-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 26px;
+  margin-top: 45px;
+}
+
+.job-card {
+  border-radius: 18px;
+  overflow: hidden;
+  background: #f4f4f2;
+  text-align: left;
+}
+
+.job-card img {
+  width: 100%;
+  height: 210px;
+  object-fit: cover;
+}
+
+.job-card div {
+  padding: 22px;
+}
+
+.job-card h3 {
+  font-size: 21px;
+  margin: 0 0 12px;
+}
+
+.job-card p {
+  line-height: 1.7;
+  color: var(--color-muted);
+  margin: 0;
+  font-size: 15px;
+}
+
+
+/* 9. 푸터 ---------------------------------------------------------------- */
+footer {
+  background: var(--color-dark);
+  color: #eee;
+  padding: 42px 7%;
+  display: flex;
+  gap: 28px;
+  flex-wrap: wrap;
+  font-size: 14px;
+}
+
+footer strong {
+  font-size: 18px;
+}
+
+
+/* 10. 대학소개 ----------------------------------------------------------- */
+.about-photo {
+  max-width: 1100px;
+  margin: 80px auto;
+}
+
+.about-photo img {
+  width: 100%;
+  max-height: 470px;
+  min-height: 220px;
+  object-fit: cover;
+}
+
+.about-copy {
+  max-width: 850px;
+  margin: 0 auto 100px;
+  text-align: center;
+  line-height: 2;
+  font-size: 17px;
+  color: #555;
+  padding: 0 25px;
+}
+
+
+/* 11. 빈 페이지·안내 (소식, 준비 중, 학과 없음) -------------------------- */
+/* 푸터가 화면 맨 아래에 오도록 이 페이지들만 세로 배치 */
+body.is-empty-page #app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.empty {
+  flex: 1;
+  min-height: 420px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  padding: 120px 24px 60px;
+  text-align: center;
+}
+
+.empty h1 {
+  font-size: 32px;
+  font-weight: 400;
+}
+
+.empty a {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+
+/* 12. 이미지 없음 표시 --------------------------------------------------- */
+/* 이미지 파일이 없으면 app.js가 이 클래스를 붙이고 회색 기본 이미지로 바꿉니다 */
+img.img-missing {
+  background: #bbb;
+}
+
+
+/* 13. 모바일 (760px 이하) ------------------------------------------------ */
+@media (max-width: 760px) {
+  .topbar {
+    height: 64px;
+    padding: 0 22px;
+  }
+
+  .logo {
+    font-size: 24px;
+  }
+
+  .menu {
+    display: block;
+  }
+
+  .topbar nav {
+    display: none;
+    position: absolute;
+    top: 64px;
+    left: 0;
+    width: 100%;
+    padding: 20px 24px;
+    background: var(--color-dark);
+    color: var(--color-white);
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .topbar nav.open {
+    display: flex;
+  }
+
+  .hero {
+    min-height: 520px;
+    height: 75vh;
+  }
+
+  .home-hero {
+    height: 100svh;
+  }
+
+  .hero-copy h1 {
+    font-size: 38px;
+  }
+
+  .hero-copy p {
+    font-size: 15px;
+  }
+
+  .content {
+    padding: 55px 18px 70px;
+  }
+
+  .section {
+    margin-bottom: 75px;
+  }
+
+  .section h2 {
+    font-size: 27px;
+  }
+
+  .tool-grid {
+    gap: 9px;
+    margin-top: 35px;
+  }
+
+  .tool-card {
+    height: 170px;
+  }
+
+  .tool-card span {
+    font-size: 14px;
+    left: 10px;
+    bottom: 12px;
+  }
+
+  .tagline {
+    line-height: 2;
+  }
+
+  .admission {
+    margin: 0 -18px;
+    padding: 42px 18px;
+  }
+
+  .admission-track {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+  }
+
+  .admission-card {
+    flex: 0 0 72%;
+    min-height: 190px;
+    scroll-snap-align: center;
+  }
+
+  .selection {
+    padding: 110px 18px 65px;
+  }
+
+  .selection-title {
+    margin-bottom: 34px;
+  }
+
+  .selection-title h1 {
+    font-size: 30px;
+  }
+
+  .dept-card {
+    flex-basis: 72vw;
+    height: 390px;
+  }
+
+  .carousel-wrap {
+    gap: 8px;
+  }
+
+  .arrow {
+    width: 34px;
+    height: 34px;
+    flex-basis: 34px;
+    font-size: 22px;
+  }
+
+  .mini-cards {
+    gap: 8px;
+    margin-top: 28px;
+  }
+
+  .mini-card {
+    height: 110px;
+    font-size: 14px;
+    border-radius: 14px;
+  }
+
+  .rate {
+    padding: 42px 12px 50px;
+    margin-bottom: 70px;
+  }
+
+  .job-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .job-card {
+    display: grid;
+    grid-template-columns: 38% 1fr;
+  }
+
+  .job-card img {
+    height: 100%;
+    min-height: 160px;
+  }
+
+  .job-card div {
+    padding: 16px;
+  }
+
+  .job-card h3 {
+    font-size: 17px;
+  }
+
+  .job-card p {
+    font-size: 13px;
+  }
+
+  .about-photo {
+    margin: 50px 18px;
+  }
+
+  .about-copy {
+    font-size: 15px;
+    margin-bottom: 65px;
+  }
+
+  footer {
+    padding: 32px 22px;
+    gap: 12px;
+    flex-direction: column;
+  }
+
+  .empty h1 {
+    font-size: 24px;
+  }
+}
