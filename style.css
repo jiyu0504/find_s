@@ -12,11 +12,11 @@
 /* 1. 변수 / 이미지 경로 -------------------------------------------------- */
 :root {
   /* 색상 */
-  --color-text: #1a1a1a;
+  --color-text: #fafafa;
   --color-dark: #171717;
   --color-white: #fff;
   --color-muted: #666;
-  --color-bg-soft: #fafafa;
+  --color-bg-soft: #1a1a1a;
 
   /* 입시결과 카드 배경 이미지 (이 파일 기준 경로) */
   --admission-img-1: url("assets/home/4.jpg");
