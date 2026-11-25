@@ -19,11 +19,11 @@
   --color-bg-soft: #f5f5f3;
 
   /* 입시결과 카드 배경 이미지 (이 파일 기준 경로) */
-  --admission-img-1: "assets/home/4.jpg";
-  --admission-img-2: "assets/home/5.jpg";
-  --admission-img-3: "assets/home/6.jpg";
-  --admission-img-4: "assets/home/7.jpg";
-  --admission-img-5: "assets/home/8.jpg";
+  --admission-img-1: url("assets/home/4.jpg");
+  --admission-img-2: url("assets/home/5.jpg");
+  --admission-img-3: url("assets/home/6.jpg");
+  --admission-img-4: url("assets/home/7.jpg");
+  --admission-img-5: url("assets/home/8.jpg");
 }
 
 
