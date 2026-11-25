@@ -12,11 +12,17 @@
 /* 1. 변수 / 이미지 경로 -------------------------------------------------- */
 :root {
   /* 색상 */
-  --color-text: #fafafa;
-  --color-dark: #171717;
-  --color-white: #fff;
-  --color-muted: #666;
-  --color-bg-soft: #1a1a1a;
+  color-scheme: dark; /* 입력창·스크롤바 등 브라우저 기본 요소도 어둡게 */
+
+  --color-bg: #1a1a1a;            /* 페이지 배경 */
+  --color-text: #fafafa;          /* 기본 글씨 */
+  --color-white: #fff;            /* 사진 위 글씨 */
+  --color-dark: #111;             /* 푸터 */
+  --color-muted: #a3a3a3;         /* 보조 글씨 */
+  --color-surface: #262626;       /* 카드·패널 */
+  --color-surface-2: #202020;     /* 넓은 구역(입시결과, 취업률), 입력칸 */
+  --color-surface-hover: #333;    /* 마우스를 올렸을 때 */
+  --color-line: #3a3a3a;          /* 테두리·구분선 */
 
   /* 입시결과 카드 배경 이미지 (이 파일 기준 경로) */
   --admission-img-1: url("assets/home/4.jpg");
@@ -40,12 +46,16 @@ body {
   margin: 0;
   font-family: Arial, "Noto Sans KR", sans-serif;
   color: var(--color-text);
-  background: var(--color-white);
+  background: var(--color-bg);
 }
 
 a {
   color: inherit;
   text-decoration: none;
+}
+
+[hidden] {
+  display: none !important;
 }
 
 :focus-visible {
@@ -69,7 +79,7 @@ a {
   color: var(--color-white);
 }
 
-/* 흰 배경 페이지(학과 선택, 소식 등)에서는 어두운 글자색 */
+/* 히어로가 없는 페이지(학과 선택, 소식 등)의 헤더 */
 .topbar.dark {
   color: var(--color-text);
 }
@@ -100,13 +110,30 @@ a {
   text-underline-offset: 8px;
 }
 
+/* 메뉴 + 돋보기 버튼 묶음 */
+.top-right {
+  display: flex;
+  align-items: center;
+  gap: 36px;
+}
+
+.search-toggle,
 .menu {
-  display: none;
   background: none;
   border: 0;
   color: inherit;
   font-size: 24px;
   cursor: pointer;
+  padding: 6px;
+  align-items: center;
+}
+
+.search-toggle {
+  display: flex;
+}
+
+.menu {
+  display: none;
 }
 
 
@@ -213,7 +240,7 @@ a {
 }
 
 .admission {
-  background: var(--color-bg-soft);
+  background: var(--color-surface-2);
   padding: 55px 25px 65px;
   max-width: none;
   margin: 0 calc((1200px - 100vw) / 2) 0;
@@ -222,7 +249,7 @@ a {
 }
 
 .admission > p {
-  color: #777;
+  color: var(--color-muted);
   margin: 0 0 36px;
 }
 
@@ -277,7 +304,7 @@ a {
 .selection-title p {
   font-size: 12px;
   letter-spacing: 4px;
-  color: #888;
+  color: var(--color-muted);
 }
 
 .selection-title h1 {
@@ -313,7 +340,7 @@ a {
   border-radius: 24px;
   overflow: hidden;
   scroll-snap-align: start;
-  background: #ddd;
+  background: var(--color-surface);
 }
 
 .dept-card img {
@@ -372,8 +399,8 @@ a {
 
 .arrow {
   border: 0;
-  background: var(--color-dark);
-  color: var(--color-white);
+  background: var(--color-text);
+  color: var(--color-bg);
   border-radius: 50%;
   width: 42px;
   height: 42px;
@@ -393,13 +420,35 @@ a {
 }
 
 .mini-card {
+  position: relative;
   height: 130px;
   border-radius: 20px;
-  background: #f1f1ef;
+  overflow: hidden;
+  background: var(--color-surface);
   display: grid;
   place-items: center;
   font-size: 18px;
   padding: 15px;
+}
+
+/* 사진이 있는 자격증 카드: 사진 위에 흰 글자 */
+.mini-card.has-img {
+  color: var(--color-white);
+  background: #777;
+}
+
+.mini-card.has-img img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.6);
+}
+
+.mini-card.has-img span {
+  position: relative; /* 사진보다 위에 보이게 */
+  text-align: center;
 }
 
 .employment-detail .section {
@@ -410,12 +459,12 @@ a {
   text-align: center;
   padding: 55px 20px 70px;
   margin: 0 auto 90px;
-  background: #f7f7f5;
+  background: var(--color-surface-2);
   border-radius: 48% 48% 0 0 / 12% 12% 0 0;
 }
 
 .rate p {
-  color: #777;
+  color: var(--color-muted);
 }
 
 .rate h3 {
@@ -439,7 +488,7 @@ a {
 .job-card {
   border-radius: 18px;
   overflow: hidden;
-  background: #f4f4f2;
+  background: var(--color-surface);
   text-align: left;
 }
 
@@ -469,6 +518,7 @@ a {
 /* 9. 푸터 ---------------------------------------------------------------- */
 footer {
   background: var(--color-dark);
+  border-top: 1px solid var(--color-line);
   color: #eee;
   padding: 42px 7%;
   display: flex;
@@ -501,7 +551,7 @@ footer strong {
   text-align: center;
   line-height: 2;
   font-size: 17px;
-  color: #555;
+  color: #d4d4d4;
   padding: 0 25px;
 }
 
@@ -540,12 +590,315 @@ body.is-empty-page #app {
 /* 12. 이미지 없음 표시 --------------------------------------------------- */
 /* 이미지 파일이 없으면 app.js가 이 클래스를 붙이고 회색 기본 이미지로 바꿉니다 */
 img.img-missing {
-  background: #bbb;
+  background: #4a4a4a;
 }
 
 
-/* 13. 모바일 (760px 이하) ------------------------------------------------ */
+/* 13. 검색 --------------------------------------------------------------- */
+/* 상단 돋보기를 누르면 헤더 아래에 펼쳐지는 검색창 */
+.search-panel {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(720px, calc(100% - 36px));
+  padding: 14px;
+  border-radius: 16px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  color: var(--color-text);
+  text-align: left; /* 히어로의 가운데 정렬이 상속되지 않게 */
+  box-shadow: 0 12px 40px rgb(0 0 0 / 0.5);
+  z-index: 10;
+}
+
+.search-form {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 6px 6px 8px;
+  border: 1px solid var(--color-line);
+  border-radius: 12px;
+  background: var(--color-surface-2);
+}
+
+.search-form:focus-within {
+  border-color: var(--color-text);
+}
+
+.search-form input[type="search"] {
+  flex: 1;
+  min-width: 0;
+  padding: 8px 4px;
+  border: 0;
+  outline: 0;
+  background: none;
+  font: inherit;
+  font-size: 16px; /* 16px 미만이면 모바일에서 입력 시 화면이 확대됨 */
+  color: inherit;
+}
+
+.search-form input[type="search"]::placeholder {
+  color: var(--color-muted);
+}
+
+.search-go {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--color-text);
+  color: var(--color-bg);
+  cursor: pointer;
+}
+
+/* 카테고리 버튼 + 펼쳐지는 목록 */
+.search-cat {
+  position: relative;
+}
+
+.cat-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 12px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--color-surface-hover);
+  color: inherit;
+  font: inherit;
+  font-size: 14px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.cat-list {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 2;
+  min-width: 150px;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  border: 1px solid var(--color-line);
+  border-radius: 12px;
+  background: var(--color-surface);
+  box-shadow: 0 8px 28px rgb(0 0 0 / 0.5);
+}
+
+.cat-list button {
+  display: block;
+  width: 100%;
+  padding: 9px 12px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.cat-list button:hover,
+.cat-list button[aria-selected="true"] {
+  background: var(--color-surface-hover);
+}
+
+.cat-list button[aria-selected="true"] {
+  font-weight: 700;
+}
+
+/* 결과 목록 (상단 검색창 아래 · 결과 페이지 공통) */
+.search-suggest {
+  max-height: min(60vh, 420px);
+  overflow-y: auto;
+}
+
+.search-suggest ul {
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.result {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 10px;
+  border-radius: 10px;
+}
+
+.result:hover,
+.result:focus-visible {
+  background: var(--color-surface-hover);
+}
+
+.result-cat {
+  flex: 0 0 auto;
+  margin-top: 2px;
+  padding: 3px 9px;
+  border-radius: 99px;
+  background: var(--color-text);
+  color: var(--color-bg);
+  font-size: 12px;
+}
+
+.result-main {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.result-main strong {
+  font-weight: 500;
+}
+
+.result-main small {
+  color: var(--color-muted);
+  font-size: 13px;
+}
+
+.result-main em {
+  color: var(--color-muted);
+  font-size: 13px;
+  font-style: normal;
+  line-height: 1.5;
+}
+
+mark {
+  border-radius: 2px;
+  background: #ffe58a;
+  color: #1a1a1a;
+}
+
+.search-more {
+  display: block;
+  padding: 10px;
+  color: var(--color-muted);
+  font-size: 14px;
+  text-align: center;
+}
+
+.search-none,
+.search-hint {
+  margin: 0;
+  padding: 22px 8px;
+  color: var(--color-muted);
+  line-height: 1.7;
+  text-align: center;
+}
+
+/* 검색 결과 페이지 */
+.search-page {
+  flex: 1;
+  width: 100%;
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 140px 24px 80px;
+}
+
+.search-page h1 {
+  margin: 0 0 24px;
+  font-size: 34px;
+  font-weight: 400;
+  text-align: center;
+}
+
+.search-page .search-form {
+  box-shadow: 0 2px 12px rgb(0 0 0 / 0.08);
+}
+
+.result-count {
+  margin: 22px 0 0;
+  color: var(--color-muted);
+  font-size: 14px;
+}
+
+.result-group h2 {
+  margin: 28px 0 6px;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.result-group h2 span {
+  margin-left: 6px;
+  color: var(--color-muted);
+  font-size: 14px;
+}
+
+.result-group ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* 소식 목록 (data.js 의 NEWS 에 글이 있을 때) */
+.news-list {
+  flex: 1;
+  width: 100%;
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 140px 24px 80px;
+}
+
+.news-list h1 {
+  margin: 0 0 32px;
+  font-size: 34px;
+  font-weight: 400;
+  text-align: center;
+}
+
+.news-item {
+  padding: 26px 0;
+  border-top: 1px solid var(--color-line);
+  scroll-margin-top: 90px;
+}
+
+.news-item time {
+  color: var(--color-muted);
+  font-size: 13px;
+}
+
+.news-item h2 {
+  margin: 6px 0 10px;
+  font-size: 21px;
+  font-weight: 500;
+}
+
+.news-item p {
+  margin: 0;
+  color: var(--color-muted);
+  line-height: 1.8;
+  white-space: pre-line;
+}
+
+
+/* 14. 모바일 (760px 이하) ------------------------------------------------ */
 @media (max-width: 760px) {
+  .top-right {
+    gap: 2px;
+  }
+
+  .search-panel {
+    top: calc(100% + 4px);
+    padding: 10px;
+  }
+
+  .cat-btn {
+    padding: 9px 10px;
+  }
+
+  .search-page,
+  .news-list {
+    padding: 110px 18px 60px;
+  }
+
   .topbar {
     height: 64px;
     padding: 0 22px;
@@ -566,7 +919,7 @@ img.img-missing {
     left: 0;
     width: 100%;
     padding: 20px 24px;
-    background: var(--color-dark);
+    background: var(--color-surface);
     color: var(--color-white);
     flex-direction: column;
     gap: 18px;

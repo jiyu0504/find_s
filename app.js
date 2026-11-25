@@ -1,21 +1,27 @@
 /* ============================================================================
    Find:S 화면 렌더링
    - 보통은 이 파일을 수정할 필요가 없습니다. 학과·문구·수치는 data.js 에서 바꾸세요.
-   - 구성: 1 설정 / 2 유틸 / 3 데이터 읽기 / 4 공통 조각 / 5 페이지 / 6 실행 / 7 이벤트
+   - 구성: 1 설정 / 2 유틸 / 3 데이터 읽기 / 4 공통 조각 / 5 페이지 / 6 검색 / 7 실행 / 8 이벤트
    ========================================================================== */
 
 
 /* 1. 설정 ------------------------------------------------------------------ */
 const IMG_EXT = "jpg";          // 이미지 확장자 (assets/{id}/1.jpg)
-const MAX_TOOLS = 3;            // TOOLS 사진은 3~5번 → 최대 3개
+const MAX_TOOLS = 3;            // TOOLS 사진은 2~4번 → 최대 3개
+const MAX_CERTS = 3;            // 자격증 사진은 6~8번 → 최대 3개 (4번째부터는 사진 없이 글자만)
 
 // 학과 폴더 안 이미지 번호 규칙 (data.js 상단 설명과 같음)
-const IMG_NO = { card: 1, hero: 2, tool: 3, job: 6 };
+//   card·hero      : 학과 선택 카드 + 학과 상세 상단 (같은 1번 사용)
+//   tool           : TOOLS 시작 번호 (2, 3, 4)
+//   careerHero     : 취업 상세 상단 (대표 이미지)
+//   cert           : 관련 자격증 시작 번호 (6, 7, 8)
+//   job            : 주요 직무 시작 번호 (9, 10, 11, …)
+const IMG_NO = { card: 1, hero: 1, tool: 2, careerHero: 5, cert: 6, job: 9 };
 
 // 이미지 파일이 없을 때 대신 보여줄 회색 이미지
 const PLACEHOLDER =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='3'%3E" +
-  "%3Crect width='4' height='3' fill='%23bbb'/%3E%3C/svg%3E";
+  "%3Crect width='4' height='3' fill='%234a4a4a'/%3E%3C/svg%3E";
 
 // 상단 메뉴: [링크, 글자, 이 메뉴가 "현재 위치"로 표시되는 페이지들]
 const NAV = [
@@ -24,6 +30,20 @@ const NAV = [
   ["news.html", "소식", ["news"]],
   ["about.html", "대학소개", ["about"]],
 ];
+
+// 검색 카테고리: [값, 드롭다운에 보이는 글자] — 첫 번째가 기본값
+const SEARCH_CATS = [
+  ["all", "전체"],
+  ["dept", "학과"],
+  ["career", "취업"],
+  ["news", "소식"],
+  ["about", "대학소개"],
+];
+const SUGGEST_LIMIT = 6;        // 검색창 아래에 바로 보여줄 결과 수
+
+const ICON_SEARCH =
+  '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" ' +
+  'stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>';
 
 const PAGE = document.body.dataset.page;
 const APP = document.querySelector("#app");
@@ -68,6 +88,9 @@ function checkData() {
     if (!d.이름) console.warn(`[data.js] ${where}: 이름 이 없습니다.`);
     if ((d.툴 || []).length > MAX_TOOLS) console.warn(`[data.js] ${where}: 툴은 ${MAX_TOOLS}개까지만 표시됩니다.`);
   });
+  NEWS.forEach((n, i) => {
+    if (!n.제목) console.warn(`[data.js] NEWS[${i}]: 제목 이 없습니다.`);
+  });
 }
 
 
@@ -79,8 +102,15 @@ function header(dark = false) {
   return `
     <header class="topbar${dark ? " dark" : ""}">
       <a class="logo" href="index.html">Find:S</a>
-      <nav id="site-nav" aria-label="주 메뉴">${links}</nav>
-      <button class="menu" type="button" aria-label="메뉴 열기" aria-expanded="false" aria-controls="site-nav">☰</button>
+      <div class="top-right">
+        <nav id="site-nav" aria-label="주 메뉴">${links}</nav>
+        <button class="search-toggle" type="button" aria-label="검색 열기" aria-expanded="false" aria-controls="search-panel">${ICON_SEARCH}</button>
+        <button class="menu" type="button" aria-label="메뉴 열기" aria-expanded="false" aria-controls="site-nav">☰</button>
+      </div>
+      <div class="search-panel" id="search-panel" hidden>
+        ${searchForm("all", "", "panel")}
+        <div class="search-suggest" aria-live="polite"></div>
+      </div>
     </header>`;
 }
 
@@ -127,23 +157,28 @@ function home() {
 function about() {
   return {
     html: `
-      ${hero(
-        "세계의 중심으로",
-        "123년 역사를 지닌 여성 대학교 · 명동과 남산을 품은 숭의의 터전에서, 여성 인재들이 꿈과 희망을 펼칠 수 있도록 교육의 사명을 다합니다.",
-        "assets/home/2.jpg",
-        "about-hero"
-      )}
+      ${hero(ABOUT.제목, ABOUT.소개, "assets/home/2.jpg", "about-hero")}
       <section class="about-photo">${imgTag("assets/home/3.jpg", "학교 소개")}</section>
-      <section class="about-copy">
-        <p>1903년 미국 북장로회 마펫 목사의 설립으로 시작된 숭의는 여성 교육의 새로운 지평을 열고, 독립운동의 소중한 역사를 이어오며 수많은 여성 선각자와 인재를 배출한 전통의 학교입니다.</p>
-        <p>하나님의 풍성한 은혜와 축복 속에서 모두가 행복을 누리며, 희망찬 미래와 더 큰 꿈을 향해 나아가기를 소망합니다.</p>
-      </section>
+      <section class="about-copy">${(ABOUT.본문 || []).map((p) => `<p>${esc(p)}</p>`).join("")}</section>
       ${footer()}`,
   };
 }
 
+// 소식: 글이 없으면 안내 문구, 있으면 목록
 function news() {
-  return emptyPage("아직 페이지가 개설되지 않았어요!", "index.html", "이 글을 누르면 홈으로 이동합니다!");
+  if (!NEWS.length) {
+    return emptyPage("아직 페이지가 개설되지 않았어요!", "index.html", "이 글을 누르면 홈으로 이동합니다!");
+  }
+  const items = NEWS.map((n, i) => `
+    <article class="news-item" id="news-${i}">
+      ${n.날짜 ? `<time>${esc(n.날짜)}</time>` : ""}
+      <h2>${esc(n.제목)}</h2>
+      <p>${esc(n.내용)}</p>
+    </article>`).join("");
+  return {
+    empty: true,
+    html: `${header(true)}<main class="news-list"><h1>소식</h1>${items}</main>${footer()}`,
+  };
 }
 
 // 학과 선택 / 취업 선택 (카드 목록)
@@ -239,7 +274,12 @@ function employmentDetail(d) {
   const certSection = certs.length ? `
     <section class="section cert">
       <h2>관련 자격증</h2>
-      <div class="mini-cards">${certs.map((c) => `<article class="mini-card"><span>${esc(c)}</span></article>`).join("")}</div>
+      <div class="mini-cards">
+        ${certs.map((c, i) => `
+          <article class="mini-card${i < MAX_CERTS ? " has-img" : ""}">
+            ${i < MAX_CERTS ? imgTag(imgPath(d.id, IMG_NO.cert + i), c) : ""}<span>${esc(c)}</span>
+          </article>`).join("")}
+      </div>
     </section>` : "";
 
   const jobSection = jobs.length ? `
@@ -255,7 +295,7 @@ function employmentDetail(d) {
     </section>` : "";
 
   return `
-    ${hero(d.슬로건 || d.이름, "내가 배운 기술, 어디로 이어질까? 다양한 직무와 취업 분야를 한눈에 확인해보세요!", imgPath(d.id, IMG_NO.hero))}
+    ${hero(d.슬로건 || d.이름, "내가 배운 기술, 어디로 이어질까? 다양한 직무와 취업 분야를 한눈에 확인해보세요!", imgPath(d.id, IMG_NO.careerHero))}
     <main class="content employment-detail">
       ${certSection}
       <section class="rate">
@@ -270,11 +310,196 @@ function employmentDetail(d) {
 }
 
 
-/* 6. 실행 ------------------------------------------------------------------ */
+/* 6. 검색 ------------------------------------------------------------------ */
+const catLabel = (value) => (SEARCH_CATS.find(([v]) => v === value) || SEARCH_CATS[0])[1];
+
+// 검색창 (mode: "panel" = 상단 돋보기를 누르면 펼쳐지는 것 / "page" = 검색 결과 페이지 안)
+function searchForm(cat = "all", q = "", mode = "panel") {
+  const options = SEARCH_CATS.map(([value, label]) =>
+    `<li><button type="button" role="option" data-cat="${value}" aria-selected="${value === cat}">${label}</button></li>`).join("");
+  return `
+    <form class="search-form is-${mode}" role="search" action="search.html" method="get">
+      <div class="search-cat">
+        <button class="cat-btn" type="button" aria-haspopup="listbox" aria-expanded="false">
+          <span class="cat-name">${catLabel(cat)}</span><span aria-hidden="true">▾</span>
+        </button>
+        <ul class="cat-list" role="listbox" aria-label="검색 카테고리" hidden>${options}</ul>
+      </div>
+      <input type="search" name="q" value="${esc(q)}" placeholder="학과, 직무, 자격증, 소식 검색" autocomplete="off" aria-label="검색어">
+      <input type="hidden" name="cat" value="${cat}">
+      <button class="search-go" type="submit" aria-label="검색">${ICON_SEARCH}</button>
+    </form>`;
+}
+
+// data.js 내용으로 검색 목록을 한 번만 만들어 둡니다.
+// 항목: { cat, title(제목), label(작은 글씨), body(본문·검색 대상), url }
+let searchIndex = null;
+function getSearchIndex() {
+  if (searchIndex) return searchIndex;
+  const list = [];
+
+  DEPARTMENTS.forEach((d) => {
+    const id = encodeURIComponent(d.id);
+    const ready = isReady(d);
+
+    list.push({
+      cat: "dept",
+      title: d.이름,
+      label: ready ? "학과" : "학과 · 준비 중",
+      body: [d.슬로건, d.소개, splitList(d.태그).join(" ")].filter(Boolean).join(" "),
+      url: `department-detail.html?dept=${id}`,
+    });
+    if (!ready) return; // 준비 중인 학과는 취업 정보가 없음
+
+    const careerUrl = `employment-detail.html?dept=${id}`;
+    list.push({
+      cat: "career",
+      title: `${d.이름} 취업 정보`,
+      label: "취업",
+      body: [d.슬로건, d.취업률, d.증감].filter(Boolean).join(" "),
+      url: careerUrl,
+    });
+    splitList(d.자격증).forEach((cert) =>
+      list.push({ cat: "career", title: cert, label: `${d.이름} · 자격증`, body: "", url: careerUrl }));
+    (d.직무 || []).map(splitPair).forEach(([name, desc]) =>
+      list.push({ cat: "career", title: name, label: `${d.이름} · 직무`, body: desc, url: careerUrl }));
+  });
+
+  NEWS.forEach((n, i) =>
+    list.push({ cat: "news", title: n.제목, label: n.날짜 ? `소식 · ${n.날짜}` : "소식", body: n.내용 || "", url: `news.html#news-${i}` }));
+
+  list.push({
+    cat: "about",
+    title: "대학소개",
+    label: "숭의여자대학교",
+    body: [ABOUT.제목, ABOUT.소개, ...(ABOUT.본문 || [])].join(" "),
+    url: "about.html",
+  });
+
+  searchIndex = list;
+  return list;
+}
+
+// 띄어쓰기로 나눈 단어가 모두 들어 있는 항목만 찾습니다 (대소문자 구분 없음)
+const parseTerms = (q) => String(q).toLowerCase().split(/\s+/).filter(Boolean);
+
+function runSearch(q, cat = "all") {
+  const terms = parseTerms(q);
+  if (!terms.length) return [];
+
+  return getSearchIndex()
+    .filter((item) => cat === "all" || item.cat === cat)
+    .map((item, order) => {
+      const title = item.title.toLowerCase();
+      const label = item.label.toLowerCase();
+      const body = item.body.toLowerCase();
+      let score = 0;
+      for (const term of terms) {
+        if (title.includes(term)) score += 3;       // 제목에 있으면 가장 위로
+        else if (label.includes(term)) score += 2;
+        else if (body.includes(term)) score += 1;
+        else return null;                            // 한 단어라도 없으면 제외
+      }
+      return { ...item, score, order };
+    })
+    .filter(Boolean)
+    .sort((a, b) => b.score - a.score || a.order - b.order);
+}
+
+// 검색어를 노란색으로 표시 (글자는 안전하게 처리)
+function highlight(text, terms) {
+  if (!terms.length) return esc(text);
+  const pattern = terms.map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|");
+  return String(text)
+    .split(new RegExp(`(${pattern})`, "gi"))
+    .map((part, i) => (i % 2 ? `<mark>${esc(part)}</mark>` : esc(part)))
+    .join("");
+}
+
+// 본문에서 검색어 주변만 잘라서 보여주기
+function snippet(body, terms, length = 70) {
+  if (!body) return "";
+  const lower = body.toLowerCase();
+  const hit = terms.map((t) => lower.indexOf(t)).filter((i) => i >= 0).sort((a, b) => a - b)[0];
+  if (hit === undefined || hit < 20) return body.length > length ? `${body.slice(0, length)}…` : body;
+  const start = hit - 20;
+  return `…${body.slice(start, start + length)}${start + length < body.length ? "…" : ""}`;
+}
+
+function resultItem(r, terms) {
+  return `
+    <a class="result" href="${esc(r.url)}">
+      <span class="result-cat">${catLabel(r.cat)}</span>
+      <span class="result-main">
+        <strong>${highlight(r.title, terms)}</strong>
+        <small>${highlight(r.label, terms)}</small>
+        ${r.body ? `<em>${highlight(snippet(r.body, terms), terms)}</em>` : ""}
+      </span>
+    </a>`;
+}
+
+// 상단 검색창 아래 실시간 결과
+function updateSuggest(form) {
+  const box = form.parentElement.querySelector(".search-suggest");
+  if (!box) return;
+  const q = form.elements.q.value.trim();
+  const cat = form.elements.cat.value;
+  if (!q) { box.innerHTML = ""; return; }
+
+  const results = runSearch(q, cat);
+  const terms = parseTerms(q);
+  box.innerHTML = results.length
+    ? `<ul>${results.slice(0, SUGGEST_LIMIT).map((r) => `<li>${resultItem(r, terms)}</li>`).join("")}</ul>
+       <a class="search-more" href="search.html?q=${encodeURIComponent(q)}&amp;cat=${cat}">${results.length}건 모두 보기 →</a>`
+    : `<p class="search-none">"${esc(q)}" 검색 결과가 없어요.</p>`;
+}
+
+// 검색 결과 페이지 (search.html?q=검색어&cat=카테고리)
+function searchPage() {
+  const params = new URLSearchParams(location.search);
+  const q = (params.get("q") || "").trim();
+  let cat = params.get("cat") || "all";
+  if (!SEARCH_CATS.some(([v]) => v === cat)) cat = "all";
+
+  const terms = parseTerms(q);
+  const results = runSearch(q, cat);
+  document.title = q ? `"${q}" 검색 | Find:S` : "검색 | Find:S";
+
+  let content;
+  if (!q) {
+    content = `<p class="search-hint">검색어를 입력해 주세요.</p>`;
+  } else if (!results.length) {
+    content = `<p class="search-none">"${esc(q)}"에 대한 ${cat === "all" ? "" : `${catLabel(cat)} `}검색 결과가 없어요.<br>다른 검색어나 카테고리로 찾아보세요.</p>`;
+  } else {
+    const groups = SEARCH_CATS.filter(([v]) => v !== "all").map(([value, label]) => {
+      const items = results.filter((r) => r.cat === value);
+      return items.length
+        ? `<section class="result-group"><h2>${label}<span>${items.length}</span></h2>
+             <ul>${items.map((r) => `<li>${resultItem(r, terms)}</li>`).join("")}</ul></section>`
+        : "";
+    }).join("");
+    content = `<p class="result-count">${catLabel(cat)} 검색 결과 ${results.length}건</p>${groups}`;
+  }
+
+  return {
+    empty: true,
+    html: `${header(true)}
+      <main class="search-page">
+        <h1>검색</h1>
+        ${searchForm(cat, q, "page")}
+        ${content}
+      </main>
+      ${footer()}`,
+  };
+}
+
+
+/* 7. 실행 ------------------------------------------------------------------ */
 const PAGES = {
   home,
   about,
   news,
+  search: searchPage,
   departments: () => cards(false),
   employment: () => cards(true),
   "department-detail": () => detail(false),
@@ -296,7 +521,8 @@ document.addEventListener("error", (e) => {
 }, true);
 
 try {
-  if (typeof DEPARTMENTS === "undefined" || typeof SITE === "undefined") {
+  if (typeof DEPARTMENTS === "undefined" || typeof SITE === "undefined" ||
+      typeof ABOUT === "undefined" || typeof NEWS === "undefined") {
     throw new Error("data.js 를 읽지 못했어요. 쉼표(,)나 따옴표(\")가 빠졌는지 확인해 주세요. (자세한 위치: 브라우저 콘솔 F12)");
   }
   checkData();
@@ -304,6 +530,8 @@ try {
   const { html, empty } = render();
   if (empty) document.body.classList.add("is-empty-page");
   APP.innerHTML = html;
+  // 소식 검색 결과(news.html#news-2)로 들어왔을 때 해당 글로 이동
+  if (location.hash) document.getElementById(location.hash.slice(1))?.scrollIntoView();
 } catch (err) {
   console.error(err);
   showError("페이지를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.");
@@ -313,29 +541,88 @@ try {
 }
 
 
-/* 7. 이벤트 ---------------------------------------------------------------- */
+/* 8. 이벤트 ---------------------------------------------------------------- */
+const $ = (selector) => document.querySelector(selector);
+
 function setMenu(open) {
-  const nav = document.querySelector("#site-nav");
-  const button = document.querySelector(".menu");
+  const nav = $("#site-nav");
+  const button = $(".menu");
   if (!nav || !button) return;
   nav.classList.toggle("open", open);
   button.setAttribute("aria-expanded", String(open));
   button.setAttribute("aria-label", open ? "메뉴 닫기" : "메뉴 열기");
 }
 
-document.addEventListener("click", (e) => {
-  const nav = document.querySelector("#site-nav");
+function setSearch(open) {
+  const panel = $("#search-panel");
+  const button = $(".search-toggle");
+  if (!panel || !button) return;
+  panel.hidden = !open;
+  button.setAttribute("aria-expanded", String(open));
+  button.setAttribute("aria-label", open ? "검색 닫기" : "검색 열기");
+  if (open) {
+    setMenu(false);
+    panel.querySelector('input[name="q"]').focus();
+  } else {
+    closeCatLists();
+  }
+}
 
-  // 모바일 메뉴 열기/닫기
-  if (e.target.closest(".menu")) {
-    setMenu(!nav.classList.contains("open"));
+// 카테고리 드롭다운 닫기 (except: 이 목록은 그대로 둠)
+function closeCatLists(except) {
+  document.querySelectorAll(".search-cat").forEach((box) => {
+    if (box === except) return;
+    box.querySelector(".cat-list").hidden = true;
+    box.querySelector(".cat-btn").setAttribute("aria-expanded", "false");
+  });
+}
+
+function chooseCategory(option) {
+  const form = option.closest("form");
+  const value = option.dataset.cat;
+  form.elements.cat.value = value;
+  form.querySelector(".cat-name").textContent = catLabel(value);
+  form.querySelectorAll(".cat-list button").forEach((b) => b.setAttribute("aria-selected", String(b === option)));
+  closeCatLists();
+  form.elements.q.focus();
+
+  // 검색 결과 페이지에서는 바로 다시 검색, 상단 검색창에서는 아래 결과만 갱신
+  if (form.classList.contains("is-page") && form.elements.q.value.trim()) form.requestSubmit();
+  else updateSuggest(form);
+}
+
+document.addEventListener("click", (e) => {
+  const target = e.target;
+
+  // 돋보기 / 모바일 메뉴 버튼
+  if (target.closest(".search-toggle")) { setSearch($("#search-panel").hidden); return; }
+  if (target.closest(".menu")) {
+    setMenu(!$("#site-nav").classList.contains("open"));
+    setSearch(false);
     return;
   }
-  // 메뉴 바깥을 누르면 닫기
-  if (nav && nav.classList.contains("open") && !e.target.closest("#site-nav")) setMenu(false);
+
+  // 카테고리 드롭다운
+  const catBtn = target.closest(".cat-btn");
+  if (catBtn) {
+    const box = catBtn.closest(".search-cat");
+    const list = box.querySelector(".cat-list");
+    closeCatLists(box);
+    list.hidden = !list.hidden;
+    catBtn.setAttribute("aria-expanded", String(!list.hidden));
+    return;
+  }
+  const option = target.closest(".cat-list button");
+  if (option) { chooseCategory(option); return; }
+
+  // 바깥을 누르면 열려 있는 것들 닫기
+  if (!target.closest(".search-cat")) closeCatLists();
+  if (!target.closest(".search-panel")) setSearch(false);
+  const nav = $("#site-nav");
+  if (nav && nav.classList.contains("open") && !target.closest("#site-nav")) setMenu(false);
 
   // 학과 카드 좌우 버튼 (카드 한 장 + 간격만큼 이동)
-  const arrow = e.target.closest(".arrow");
+  const arrow = target.closest(".arrow");
   if (arrow) {
     const track = arrow.closest(".carousel-wrap").querySelector(".department-track");
     const card = track.querySelector(".dept-card");
@@ -345,7 +632,39 @@ document.addEventListener("click", (e) => {
   }
 });
 
-// Esc 키로 메뉴 닫기
+// 입력할 때마다 결과 갱신
+document.addEventListener("input", (e) => {
+  if (e.target.matches('.search-form input[name="q"]')) updateSuggest(e.target.form);
+});
+
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") setMenu(false);
+  // Esc: 카테고리 목록 → 검색창 → 메뉴 순서로 닫기
+  if (e.key === "Escape") {
+    const openList = document.querySelector(".cat-list:not([hidden])");
+    if (openList) {
+      openList.closest(".search-cat").querySelector(".cat-btn").focus();
+      closeCatLists();
+    } else {
+      const wasOpen = $("#search-panel") && !$("#search-panel").hidden;
+      setSearch(false);
+      setMenu(false);
+      if (wasOpen) $(".search-toggle").focus();
+    }
+    return;
+  }
+
+  // ↓ ↑ 로 입력칸과 결과 목록 사이 이동
+  if (e.key !== "ArrowDown" && e.key !== "ArrowUp") return;
+  const panel = e.target.closest(".search-panel");
+  if (!panel) return;
+  const links = [...panel.querySelectorAll(".search-suggest a")];
+  if (!links.length) return;
+
+  const index = links.indexOf(e.target);
+  let next;
+  if (e.target.matches('input[name="q"]')) next = e.key === "ArrowDown" ? links[0] : null;
+  else if (e.key === "ArrowDown") next = links[Math.min(index + 1, links.length - 1)];
+  else next = index > 0 ? links[index - 1] : panel.querySelector('input[name="q"]');
+
+  if (next) { e.preventDefault(); next.focus(); }
 });
