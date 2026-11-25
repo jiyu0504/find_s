@@ -130,10 +130,10 @@ function about() {
       ${hero(
         "세계의 중심으로",
         "123년 역사를 지닌 여성 대학교 · 명동과 남산을 품은 숭의의 터전에서, 여성 인재들이 꿈과 희망을 펼칠 수 있도록 교육의 사명을 다합니다.",
-        "assets/about/1.jpg",
+        "assets/home/2.jpg",
         "about-hero"
       )}
-      <section class="about-photo">${imgTag("assets/about/2.jpg", "학교 소개")}</section>
+      <section class="about-photo">${imgTag("assets/home/3.jpg", "학교 소개")}</section>
       <section class="about-copy">
         <p>1903년 미국 북장로회 마펫 목사의 설립으로 시작된 숭의는 여성 교육의 새로운 지평을 열고, 독립운동의 소중한 역사를 이어오며 수많은 여성 선각자와 인재를 배출한 전통의 학교입니다.</p>
         <p>하나님의 풍성한 은혜와 축복 속에서 모두가 행복을 누리며, 희망찬 미래와 더 큰 꿈을 향해 나아가기를 소망합니다.</p>
