@@ -230,7 +230,17 @@ a {
   position: absolute;
   bottom: 18px;
   left: 18px;
+  right: 18px;
   font-size: 19px;
+}
+
+/* TOOLS 이름 아래 작은 영문 설명 */
+.tool-card small {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  line-height: 1.4;
+  opacity: 0.85;
 }
 
 .tagline {
@@ -255,7 +265,7 @@ a {
 
 .admission-track {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* 칸 수(5~6개 등)에 맞춰 한 줄로 */
   gap: 10px;
 }
 
@@ -287,6 +297,13 @@ a {
 .admission-card strong {
   font-size: clamp(22px, 3vw, 36px);
   font-weight: 400;
+}
+
+/* 값이 두 개일 때 아래 작은 글씨 (예: 222점) */
+.admission-card .admission-sub {
+  margin-top: -10px;
+  font-size: 15px;
+  opacity: 0.85;
 }
 
 

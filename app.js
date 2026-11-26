@@ -232,7 +232,11 @@ function detail(employment) {
 }
 
 function departmentDetail(d) {
-  const tools = (d.툴 || []).slice(0, MAX_TOOLS);
+  // 툴: "이름" 또는 "이름 | 작은 설명"
+  const tools = (d.툴 || []).slice(0, MAX_TOOLS).map((line) => {
+    const [name, desc] = splitPair(line);
+    return name ? [name, desc] : [desc, ""];
+  });
   const tags = splitList(d.태그);
 
   // 입시: 비어 있으면 "자료 준비 중" 5칸, 값이 있으면 SITE.입시라벨 순서대로 라벨을 붙임
@@ -240,15 +244,21 @@ function departmentDetail(d) {
   const admission = lines.map((line, i) => {
     const [ownLabel, value] = splitPair(line);
     const label = ownLabel || SITE.입시라벨[i] || "";
-    return `<article class="admission-card"><small>${esc(label)}</small><strong>${esc(value)}</strong></article>`;
+    // 값에 | 가 있으면 앞은 큰 글씨, 뒤는 작은 글씨 (예: "28.86 | 222점")
+    const [main, ...rest] = value.split("|").map((t) => t.trim());
+    const sub = rest.join(" | ");
+    return `<article class="admission-card"><small>${esc(label)}</small><strong>${esc(main)}</strong>${sub ? `<span class="admission-sub">${esc(sub)}</span>` : ""}</article>`;
   }).join("");
 
   const toolsSection = tools.length || tags.length ? `
     <section class="section tools">
       <h2>TOOLS</h2>
       <div class="tool-grid">
-        ${tools.map((name, i) => `
-          <article class="tool-card">${imgTag(imgPath(d.id, IMG_NO.tool + i), name)}<span>${esc(name)}</span></article>`).join("")}
+        ${tools.map(([name, desc], i) => `
+          <article class="tool-card">
+            ${imgTag(imgPath(d.id, IMG_NO.tool + i), name)}
+            <span>${esc(name)}${desc ? `<small>${esc(desc)}</small>` : ""}</span>
+          </article>`).join("")}
       </div>
       <div class="tagline">${tags.map((t) => `#${esc(t)}`).join("　")}</div>
     </section>` : "";
@@ -295,7 +305,7 @@ function employmentDetail(d) {
     </section>` : "";
 
   return `
-    ${hero(d.슬로건 || d.이름, "내가 배운 기술, 어디로 이어질까? 다양한 직무와 취업 분야를 한눈에 확인해보세요!", imgPath(d.id, IMG_NO.careerHero))}
+    ${hero(d.슬로건 || d.이름, `${d.취업소개 || SITE.취업소개기본} ${SITE.취업안내}`, imgPath(d.id, IMG_NO.careerHero))}
     <main class="content employment-detail">
       ${certSection}
       <section class="rate">
