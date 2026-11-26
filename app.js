@@ -240,37 +240,49 @@ function departmentDetail(d) {
   const tags = splitList(d.태그);
 
   // 입시: 비어 있으면 "자료 준비 중" 5칸, 값이 있으면 SITE.입시라벨 순서대로 라벨을 붙임
-  const lines = d.입시 && d.입시.length ? d.입시 : SITE.입시라벨.map(() => "자료 준비 중");
+  const hasAdmission = Boolean(d.입시 && d.입시.length);
+  const lines = hasAdmission ? d.입시 : SITE.입시라벨.map(() => "자료 준비 중");
   const admission = lines.map((line, i) => {
     const [ownLabel, value] = splitPair(line);
     const label = ownLabel || SITE.입시라벨[i] || "";
     // 값에 | 가 있으면 앞은 큰 글씨, 뒤는 작은 글씨 (예: "28.86 | 222점")
     const [main, ...rest] = value.split("|").map((t) => t.trim());
     const sub = rest.join(" | ");
-    return `<article class="admission-card"><small>${esc(label)}</small><strong>${esc(main)}</strong>${sub ? `<span class="admission-sub">${esc(sub)}</span>` : ""}</article>`;
+    // 라벨이 "2026 정시" 처럼 띄어쓰기가 있으면 연도(작게) + 전형(크게)로 나눠서 표시
+    const [year, ...term] = label.split(" ");
+    const labelHtml = term.length
+      ? `<small>${esc(year)}</small><b>${esc(term.join(" "))}</b>`
+      : `<b>${esc(label)}</b>`;
+    return `<article class="admission-card${hasAdmission ? "" : " is-empty"}">${labelHtml}<strong>${esc(main)}</strong>${sub ? `<span class="admission-sub">${esc(sub)}</span>` : ""}</article>`;
   }).join("");
 
   const toolsSection = tools.length || tags.length ? `
     <section class="section tools">
       <h2>TOOLS</h2>
-      <div class="tool-grid">
+      ${tools.length ? `<div class="tool-grid" data-count="${tools.length}">
         ${tools.map(([name, desc], i) => `
           <article class="tool-card">
             ${imgTag(imgPath(d.id, IMG_NO.tool + i), name)}
             <span>${esc(name)}${desc ? `<small>${esc(desc)}</small>` : ""}</span>
           </article>`).join("")}
-      </div>
+      </div>` : ""}
       <div class="tagline">${tags.map((t) => `#${esc(t)}`).join("　")}</div>
     </section>` : "";
 
   return `
     ${hero(d.이름, d.소개, imgPath(d.id, IMG_NO.hero))}
-    <main class="content">
-      ${toolsSection}
-      <section class="section admission">
+    <main>
+      <div class="content content-tools">${toolsSection}</div>
+      <section class="admission">
         <h2>입시결과</h2>
         <p>${esc(SITE.입시안내)}</p>
-        <div class="admission-track">${admission}</div>
+        <div class="admission-carousel">
+          <div class="admission-track" tabindex="0" role="region" aria-label="입시 결과 목록">${admission}</div>
+          <div class="admission-nav">
+            <button class="admission-arrow prev" type="button" aria-label="이전 입시 결과">‹</button>
+            <button class="admission-arrow next" type="button" aria-label="다음 입시 결과">›</button>
+          </div>
+        </div>
       </section>
     </main>
     ${footer()}`;
@@ -630,6 +642,17 @@ document.addEventListener("click", (e) => {
   if (!target.closest(".search-panel")) setSearch(false);
   const nav = $("#site-nav");
   if (nav && nav.classList.contains("open") && !target.closest("#site-nav")) setMenu(false);
+
+  // 입시결과 좌우 버튼 (카드 한 장 + 간격만큼 이동)
+  const admissionArrow = target.closest(".admission-arrow");
+  if (admissionArrow) {
+    const track = admissionArrow.closest(".admission-carousel").querySelector(".admission-track");
+    const card = track.querySelector(".admission-card");
+    const gap = parseFloat(getComputedStyle(track).columnGap) || 20;
+    const step = (card ? card.offsetWidth : 300) + gap;
+    track.scrollBy({ left: admissionArrow.classList.contains("next") ? step : -step, behavior: "smooth" });
+    return;
+  }
 
   // 학과 카드 좌우 버튼 (카드 한 장 + 간격만큼 이동)
   const arrow = target.closest(".arrow");
