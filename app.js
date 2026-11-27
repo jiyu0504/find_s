@@ -701,3 +701,39 @@ document.addEventListener("keydown", (e) => {
 
   if (next) { e.preventDefault(); next.focus(); }
 });
+
+
+/* 9. 상단 바: 내리면 숨고 올리면 나타남 ------------------------------------ */
+(function stickyHeader() {
+  const bar = $(".topbar");
+  if (!bar) return;
+
+  const HIDE_AFTER = 80;   // 이 높이(px)보다 위에서는 항상 보임
+  const MIN_MOVE = 6;      // 이만큼 이상 움직여야 방향으로 인정 (떨림 방지)
+  let lastY = window.scrollY;
+  let waiting = false;
+
+  function update() {
+    waiting = false;
+    const y = Math.max(0, window.scrollY); // iOS 의 위쪽 튕김(음수) 무시
+    bar.classList.toggle("is-scrolled", y > 24);
+
+    // 검색창이나 모바일 메뉴가 열려 있으면 숨기지 않음
+    const pinned = !$("#search-panel").hidden || $("#site-nav").classList.contains("open");
+    if (pinned || y < HIDE_AFTER) {
+      bar.classList.remove("is-hidden");
+      lastY = y;
+      return;
+    }
+
+    const move = y - lastY;
+    if (Math.abs(move) < MIN_MOVE) return; // 조금씩 움직일 때는 쌓아서 계산
+    bar.classList.toggle("is-hidden", move > 0);
+    lastY = y;
+  }
+
+  window.addEventListener("scroll", () => {
+    if (!waiting) { waiting = true; requestAnimationFrame(update); }
+  }, { passive: true });
+  update();
+})();

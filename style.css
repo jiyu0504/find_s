@@ -68,8 +68,8 @@ a {
 /* 3. 상단 바(헤더) ------------------------------------------------------- */
 .topbar {
   height: 78px;
-  position: absolute;
-  z-index: 5;
+  position: fixed; /* 스크롤해도 화면 위에 붙어 있음 (숨김/표시는 app.js 가 클래스로 제어) */
+  z-index: 100;
   top: 0;
   left: 0;
   width: 100%;
@@ -78,6 +78,30 @@ a {
   justify-content: space-between;
   padding: 0 7%;
   color: var(--color-white);
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+/* 조금 내려가면: 사진 위에서도 글자가 읽히도록 어두운 반투명 배경 */
+.topbar.is-scrolled {
+  background: rgb(26 26 26 / 0.88);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+/* 아래로 스크롤하면 위로 숨김 (위로 올리면 다시 나타남) */
+.topbar.is-hidden {
+  transform: translateY(-100%);
+}
+
+/* 키보드(Tab)로 메뉴에 들어오면 숨겨져 있어도 보이게 */
+.topbar:has(:focus-visible) {
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .topbar {
+    transition: none;
+  }
 }
 
 /* 히어로가 없는 페이지(학과 선택, 소식 등)의 헤더 */
