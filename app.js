@@ -258,7 +258,7 @@ function departmentDetail(d) {
 
   const toolsSection = tools.length || tags.length ? `
     <section class="section tools">
-      <h2>TOOLS</h2>
+      <h2>Knowledge and Skills</h2>
       ${tools.length ? `<div class="tool-grid" data-count="${tools.length}">
         ${tools.map(([name, desc], i) => `
           <article class="tool-card">
