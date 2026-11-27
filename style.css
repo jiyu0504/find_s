@@ -196,6 +196,14 @@ a {
   white-space: pre-line; /* 소개 문구의 \n 줄바꿈 반영 */
 }
 
+/* 학과 상세: 소개 문구 아래 해시태그 */
+.hero-tags {
+  margin-top: 20px;
+  font-size: clamp(14px, 1.4vw, 18px);
+  letter-spacing: 0.5px;
+  opacity: 0.85;
+}
+
 .home-hero {
   height: 100vh;
   min-height: 620px;
@@ -303,12 +311,6 @@ a {
   font-size: 12px;
   line-height: 1.4;
   opacity: 0.85;
-}
-
-.tagline {
-  color: var(--color-muted);
-  font-size: 14px;
-  letter-spacing: 0.5px;
 }
 
 /* 입시결과: 큰 사진 카드를 옆으로 넘겨 보는 캐러셀.
@@ -1160,8 +1162,9 @@ mark {
     font-size: 17px;
   }
 
-  .tagline {
-    line-height: 2;
+  .hero-tags {
+    margin-top: 14px;
+    line-height: 1.9;
   }
 
   .selection {

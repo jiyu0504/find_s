@@ -123,11 +123,12 @@ function footer() {
     </footer>`;
 }
 
-function hero(title, sub, img, cls = "") {
+// extra: 소개 문구 아래에 붙일 HTML (학과 상세의 해시태그 등)
+function hero(title, sub, img, cls = "", extra = "") {
   return `
     <section class="hero ${cls}" style="background-image:linear-gradient(#0006,#0006),url('${esc(img)}')">
       ${header()}
-      <div class="hero-copy"><h1>${esc(title)}</h1><p>${esc(sub)}</p></div>
+      <div class="hero-copy"><h1>${esc(title)}</h1><p>${esc(sub)}</p>${extra}</div>
     </section>`;
 }
 
@@ -256,20 +257,23 @@ function departmentDetail(d) {
     return `<article class="admission-card${hasAdmission ? "" : " is-empty"}">${labelHtml}<strong>${esc(main)}</strong>${sub ? `<span class="admission-sub">${esc(sub)}</span>` : ""}</article>`;
   }).join("");
 
-  const toolsSection = tools && tools.length ? `
+  const toolsSection = tools.length ? `
     <section class="section tools">
-      <h2>Knowledge and Skills</h2>
-      <div class="tool-grid" data-count="${tools.length}">
+      <h2>TOOLS</h2>
+      ${tools.length ? `<div class="tool-grid" data-count="${tools.length}">
         ${tools.map(([name, desc], i) => `
           <article class="tool-card">
             ${imgTag(imgPath(d.id, IMG_NO.tool + i), name)}
             <span>${esc(name)}${desc ? `<small>${esc(desc)}</small>` : ""}</span>
           </article>`).join("")}
-      </div>
+      </div>` : ""}
     </section>` : "";
 
+  // 태그는 상단 소개 문구 아래에 표시
+  const tagsHtml = tags.length ? `<div class="hero-tags">${tags.map((t) => `#${esc(t)}`).join("　")}</div>` : "";
+
   return `
-    ${hero(d.이름, d.소개, imgPath(d.id, IMG_NO.hero))}
+    ${hero(d.이름, d.소개, imgPath(d.id, IMG_NO.hero), "", tagsHtml)}
     <main>
       <div class="content content-tools">${toolsSection}</div>
       <section class="admission">
