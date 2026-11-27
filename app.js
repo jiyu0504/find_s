@@ -256,17 +256,16 @@ function departmentDetail(d) {
     return `<article class="admission-card${hasAdmission ? "" : " is-empty"}">${labelHtml}<strong>${esc(main)}</strong>${sub ? `<span class="admission-sub">${esc(sub)}</span>` : ""}</article>`;
   }).join("");
 
-  const toolsSection = tools.length || tags.length ? `
+  const toolsSection = tools && tools.length ? `
     <section class="section tools">
       <h2>Knowledge and Skills</h2>
-      ${tools.length ? `<div class="tool-grid" data-count="${tools.length}">
+      <div class="tool-grid" data-count="${tools.length}">
         ${tools.map(([name, desc], i) => `
           <article class="tool-card">
             ${imgTag(imgPath(d.id, IMG_NO.tool + i), name)}
             <span>${esc(name)}${desc ? `<small>${esc(desc)}</small>` : ""}</span>
           </article>`).join("")}
-      </div>` : ""}
-      <div class="tagline">${tags.map((t) => `#${esc(t)}`).join("　")}</div>
+      </div>
     </section>` : "";
 
   return `
