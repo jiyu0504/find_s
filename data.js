@@ -94,7 +94,9 @@ const DEPARTMENTS = [
     자격증: "정보처리산업기사, 컴퓨터활용능력 1급/2급, 디지털정보활용능력 (DIAT)",
     취업률: "",
     증감: "",
-    툴: ["JAVA", "PYTHON", "JAVASCRIPT"],
+    툴: ["JAVA | Write once, run anywhere", 
+        "PYTHON | Life is short, you need Python.",
+        'JAVASCRIPT | console.log ("Hello, World");'],
     직무: [
       "응용 SW 개발자 | 사용 목적에 맞는 프로그램과 앱을 기획·설계·개발·테스트하는 직업",
       "앱 개발자 | 모바일 기기에서 사용하는 애플리케이션을 기획·설계·개발·테스트하는 직업",
@@ -112,7 +114,9 @@ const DEPARTMENTS = [
     자격증: "컴퓨터그래픽운용기능사, GTQ, 컬러리스트산업기사",
     취업률: "79.7%",
     증감: "작년 대비 11.8% 증가!",
-    툴: ["Photoshop", "Illustrator", "InDesign"],
+    툴: ["Photoshop | Photo Editing & Design",
+        "Illustrator | Vector Design & Art", 
+        "InDesign | Editorial Layout Design"],
     직무: [
       "광고대행사 | 광고 전략 수립부터 제작, 집행, 성과 분석까지 광고 업무를 전문적으로 수행하는 직업",
       "웹디자인분야 | 웹사이트의 디자인과 레이아웃, 사용자 경험을 설계하는 직업",
