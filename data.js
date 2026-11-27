@@ -96,7 +96,7 @@ const DEPARTMENTS = [
     증감: "",
     툴: ["JAVA | Write once, run anywhere", 
         "PYTHON | Life is short, you need Python.",
-        'JAVASCRIPT | console.log ("Hello, World");'],
+        "JAVASCRIPT | console.log ('Hello, World');"],
     직무: [
       "응용 SW 개발자 | 사용 목적에 맞는 프로그램과 앱을 기획·설계·개발·테스트하는 직업",
       "앱 개발자 | 모바일 기기에서 사용하는 애플리케이션을 기획·설계·개발·테스트하는 직업",
