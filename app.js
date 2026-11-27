@@ -86,7 +86,7 @@ function checkData() {
     if (seen.has(d.id)) console.warn(`[data.js] ${where}: id "${d.id}" 가 중복됩니다.`);
     seen.add(d.id);
     if (!d.이름) console.warn(`[data.js] ${where}: 이름 이 없습니다.`);
-    if ((d.툴 || []).length > MAX_TOOLS) console.warn(`[data.js] ${where}: 툴은 ${MAX_TOOLS}개까지만 표시됩니다.`);
+    if ((d.툴 || []).length > MAX_S) console.warn(`[data.js] ${where}: 툴은 ${MAX_TOOLS}개까지만 표시됩니다.`);
   });
   NEWS.forEach((n, i) => {
     if (!n.제목) console.warn(`[data.js] NEWS[${i}]: 제목 이 없습니다.`);
@@ -259,7 +259,7 @@ function departmentDetail(d) {
 
   const toolsSection = tools.length ? `
     <section class="section tools">
-      <h2>TOOLS</h2>
+      <h2>Knowledge and Skills</h2>
       ${tools.length ? `<div class="tool-grid" data-count="${tools.length}">
         ${tools.map(([name, desc], i) => `
           <article class="tool-card">
